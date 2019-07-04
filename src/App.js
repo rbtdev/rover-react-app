@@ -27,11 +27,11 @@ function RoverGrid(props) {
   const roverIcons = rovers.map(rover => {
     let [x, y, heading] = rover.position.split(' ');
     return (
-      <div className='rover' style={{ 
-        width: ratioW - 1, 
-        height: ratioH - 1, 
-        left: x * ratioW - ratioW/2, 
-        bottom: y * ratioH-ratioH/2,
+      <div className='rover' style={{
+        width: ratioW - 1,
+        height: ratioH - 1,
+        left: x * ratioW - ratioW / 2,
+        bottom: y * ratioH - ratioH / 2,
         backgroundSize: Math.min(ratioH, ratioW),
         transform: `rotate(${rotation[heading]}deg)`
       }} />
@@ -56,9 +56,12 @@ class App extends React.Component {
         xMax: 5,
         yMax: 5
       },
-      rovers: [new Rover('0 0 N', '5 5') ]
+      rovers: [
+        new Rover('0 0 N', '5 5'),
+        new Rover('5 0 E', '5 5')
+      ]
     }
-    this.commandInput = null;
+    this.commandInput = [];
   }
 
   setGridSize = (gridSize) => {
@@ -66,18 +69,25 @@ class App extends React.Component {
     this.setState({ gridSize: { xMax, yMax } });
   }
 
-  commandRover = () => {
-    let command = this.commandInput.value;
-    this.state.rovers[0].execute(command);
-    this.setState({commandCount: this.state.commandCount+1})
+  commandRover = (roverIndex) => {
+    return () => {
+      let command = this.commandInput[roverIndex].value;
+      this.state.rovers[roverIndex].execute(command);
+      this.setState({ commandCount: this.state.commandCount + 1 });
+    }
   }
 
   render() {
     return (
       <div className="App">
         <RoverGrid size={this.state.gridSize} rovers={this.state.rovers} />
-        <input ref = {ref=>(this.commandInput = ref)} type='text'/>
-        <button onClick = {this.commandRover}>Execute</button>
+        {this.state.rovers.map((rover, i) => (
+          <div key={i}>
+            <input ref={ref => (this.commandInput[i] = ref)} type='text' placeholder = {`Rover ${i+1}`} />
+            <button onClick={this.commandRover(i)}>Execute</button>
+          </div>
+        ))
+        }
 
         <div>
           <p>Type a command in the input box to move and rotate the rover</p>

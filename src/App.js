@@ -69,12 +69,10 @@ class App extends React.Component {
     this.setState({ gridSize: { xMax, yMax } });
   }
 
-  commandRover = (roverIndex) => {
-    return () => {
-      let command = this.commandInput[roverIndex].value;
-      this.state.rovers[roverIndex].execute(command);
-      this.setState({ commandCount: this.state.commandCount + 1 });
-    }
+  commandRover = (roverIndex) => () => {
+    let command = this.commandInput[roverIndex].value;
+    this.state.rovers[roverIndex].execute(command);
+    this.setState({ commandCount: this.state.commandCount + 1 });
   }
 
   render() {
@@ -83,11 +81,10 @@ class App extends React.Component {
         <RoverGrid size={this.state.gridSize} rovers={this.state.rovers} />
         {this.state.rovers.map((rover, i) => (
           <div key={i}>
-            <input ref={ref => (this.commandInput[i] = ref)} type='text' placeholder = {`Rover ${i+1}`} />
+            <input ref={ref => (this.commandInput[i] = ref)} type='text' placeholder={`Rover ${i + 1}`} />
             <button onClick={this.commandRover(i)}>Execute</button>
           </div>
-        ))
-        }
+        ))}
 
         <div>
           <p>Type a command in the input box to move and rotate the rover</p>
